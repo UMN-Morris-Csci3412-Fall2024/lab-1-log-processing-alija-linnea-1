@@ -1,0 +1,20 @@
+
+	<!-- ++++++++++++ START OF USERNAME HEADER +++++++++++++++++++++++++++++++ -->
+	
+	google.setOnLoadCallback(drawUsernameDistribution);
+
+	function drawUsernameDistribution() {
+		var data = new google.visualization.DataTable();
+		data.addColumn('string', 'Username');
+		data.addColumn('number', 'Number of failed logins');
+
+	<!-- ++++++++++++ END OF USERNAME HEADER +++++++++++++++++++++++++++++++ -->
+data.addRow(['aaron', 1]) data.addRow(['admin', 2]) data.addRow(['gt05', 1]) data.addRow(['root', 3]) data.addRow(['stephanie', 1]) data.addRow(['stud', 2]) data.addRow(['trash', 2]) data.addRow(['william', 1])
+	<!-- ++++++++++++ START OF USERNAME FOOTER +++++++++++++++++++++++++++++++ -->
+
+		var chart = new google.visualization.PieChart(document.getElementById('username_dist_div'));
+		chart.draw(data, {width: 800, height: 550, title: 'Failed logins by username'});
+	}
+
+	<!-- ++++++++++++ END OF USERNAME FOOTER +++++++++++++++++++++++++++++++ -->
+
