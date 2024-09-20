@@ -5,18 +5,20 @@ directory="$1"
 
 home=$(pwd)
 
-cd $directory
+cd $directory # ......../data
 
 usernames_file="usernames.txt"
 
-rm -f "$usernames_file"
+usernames_file_path="${usernames_file}" # .........../data/data/usernames.txt
 
-touch "$usernames_file"
-
-usernames_file_path="${directory}/${usernames_file}"
-echo $usernames_file_path
+touch "${usernames_file}"
 
 for dir in */ ; do
+    # if [ ! -f "${dir}/failed_login_data.txt" ] ; then
+    #     echo "$0: ${dir}/failed_login_data.txt does not exist."
+    #     exit 1
+    # fi
+
     temp=$(awk '{print $4}' "${dir}/failed_login_data.txt")
     for word in $temp; do
     echo $word >> $usernames_file_path
@@ -35,14 +37,11 @@ rm -f "$contents_file"
 
 touch "$contents_file"
 
-datarows=$(awk '{printf "data.addRow([\x27"$2"\x27, "$1"]);"}' "$sorted_usernames_file")
+awk '{print"data.addRow([\x27"$2"\x27, "$1"]);"}' "$sorted_usernames_file" > $contents_file
 
-#echo $(awk '{print"data.addRow([\x27"$2"\x27, "$1"]);"}' "$sorted_usernames_file") > $contents_file
+    # if [ ! -f "${home}/bin/wrap_contents.sh" ] ; then
+    #     echo "$0: ${home}/bin/wrap_contents.sh does not exist."
+    #     exit 1
+    # fi
 
-echo $datarows > $contents_file
-
-# for row in $datarows; do 
-#     echo $row >> $contents_file
-# done
-
-source /Users/linneagilbertson/Desktop/ComputingSystemsPracticum/lab-1-log-processing-alija-linnea-1/bin/wrap_contents.sh $contents_file "username_dist" "username_dist.html"
+source ${home}/bin/wrap_contents.sh $contents_file "username_dist" "username_dist.html"
