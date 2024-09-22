@@ -5,7 +5,7 @@ directory="$1"
 
 home=$(pwd)
 
-cd $directory # ......../data
+cd "$directory" || exit 1
 
 usernames_file="usernames.txt"
 
@@ -21,7 +21,7 @@ for dir in */ ; do
 
     temp=$(awk '{print $4}' "${dir}/failed_login_data.txt")
     for word in $temp; do
-    echo $word >> $usernames_file_path
+    echo "$word" >> $usernames_file_path
     done
 done
 
@@ -44,4 +44,4 @@ awk '{print"data.addRow([\x27"$2"\x27, "$1"]);"}' "$sorted_usernames_file" > $co
     #     exit 1
     # fi
 
-source ${home}/bin/wrap_contents.sh $contents_file "username_dist" "username_dist.html"
+source "${home}/bin/wrap_contents.sh" $contents_file "username_dist" "username_dist.html"

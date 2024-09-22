@@ -1,3 +1,5 @@
+#!/bin/bash
+
 #get temp directory with log files in it
 temp_dir="$1"
 
