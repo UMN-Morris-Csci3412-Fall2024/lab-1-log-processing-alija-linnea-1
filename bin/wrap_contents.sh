@@ -4,7 +4,7 @@ contents_file="$1"
 specifier="$2"
 result_file="$3"
 
-home=$(pwd)
+#home=$(pwd)
 
 # cd $temp_dir
 
@@ -15,7 +15,7 @@ home=$(pwd)
 #     exit 1
 # fi
 
-contents_file_path=$(find . -name $contents_file)
+contents_file_path=$(find . -name "$contents_file")
 
 header_file="${specifier}_header.html"
 footer_file="${specifier}_footer.html"
@@ -31,28 +31,28 @@ footer_file="${specifier}_footer.html"
 #     exit 1
 # fi
 
-specifier_header_path=$(find ../html_components -name $header_file)
+specifier_header_path=$(find ../html_components -name "$header_file")
 
 #find local file path to the footer file that will be put on the bottom
-specifier_footer_path=$(find ../html_components -name $footer_file)
+specifier_footer_path=$(find ../html_components -name "$footer_file")
 
 #get string contents of all needed files
 
-middle=$(< $contents_file_path)
+middle=$(< "$contents_file_path")
 
 # echo $middle
 # exit 1
 
-top=$(< $specifier_header_path)
+top=$(< "$specifier_header_path")
 
-bottom=$(< $specifier_footer_path)
+bottom=$(< "$specifier_footer_path")
 
 contents="${top}
 ${middle}
 ${bottom}"
 
 #create html file and add the contents to it
-cat > $result_file << EOF
+cat > "$result_file" << EOF
 
 $contents
 
