@@ -3,7 +3,7 @@
 #get temp directory with log files in it
 temp_dir="$1"
 
-cd "$temp_dir"
+cd "$temp_dir" || exit 1
 
 #BEGIN { print "Started processing logs..." > "/dev/stderr" }
 
@@ -11,7 +11,7 @@ find . -type f -name "secure*" | while read -r log_file; do
     echo "Processing $log_file..."
     
     # Filter out non-ASCII characters and extract failed login attempts
-    cat "$log_file" | tr -cd '\11\12\15\40-\176' | awk '
+     tr -cd '\11\12\15\40-\176' < "$log_file" | awk '
     # Ignore empty lines
     NF > 0 {
       # Handle invalid user login attempts
