@@ -1,60 +1,38 @@
 #!/bin/bash
 
+# Check if the correct number of arguments are provided
+if [ $# -ne 3 ]; then
+  echo "Usage: $0 <contents_file> <specifier> <result_file>"
+  exit 1
+fi
+
 contents_file="$1"
 specifier="$2"
 result_file="$3"
 
-#home=$(pwd)
+# Define paths for header and footer based on the specifier
+header_file="html_components/${specifier}_header.html"
+footer_file="html_components/${specifier}_footer.html"
 
-# cd $temp_dir
+# Check if the necessary files exist
+if [ ! -f "$contents_file" ]; then
+  echo "Error: Contents file $contents_file not found."
+  exit 1
+fi
 
-#find local file path to the contents_file that will be put in the middle
+if [ ! -f "$header_file" ]; then
+  echo "Error: Header file $header_file not found."
+  exit 1
+fi
 
-# if [ ! -f "${contents_file}" ] ; then
-#     echo "$0: ${contents_file} not found."
-#     exit 1
-# fi
+if [ ! -f "$footer_file" ]; then
+  echo "Error: Footer file $footer_file not found."
+  exit 1
+fi
 
-contents_file_path=$(find . -name "$contents_file")
+# Combine the header, contents, and footer into the result file
+cat "$header_file" > "$result_file"
+cat "$contents_file" >> "$result_file"
+cat "$footer_file" >> "$result_file"
 
-header_file="${specifier}_header.html"
-footer_file="${specifier}_footer.html"
-
-#find local file path to the header file that will be put on top
-# if [ ! -f "../html_components/${header_file}" ] ; then
-#     echo "$0: ${header_file} not found."
-#     exit 1
-# fi
-
-# if [ ! -f "../html_components/${footer_file}" ] ; then
-#     echo "$0: ${footer_file} not found."
-#     exit 1
-# fi
-
-specifier_header_path=$(find ../html_components -name "$header_file")
-
-#find local file path to the footer file that will be put on the bottom
-specifier_footer_path=$(find ../html_components -name "$footer_file")
-
-#get string contents of all needed files
-
-middle=$(< "$contents_file_path")
-
-# echo $middle
-# exit 1
-
-top=$(< "$specifier_header_path")
-
-bottom=$(< "$specifier_footer_path")
-
-contents="${top}
-${middle}
-${bottom}"
-
-#create html file and add the contents to it
-cat > "$result_file" << EOF
-
-$contents
-
-EOF
-
+echo "Successfully generated $result_file"
