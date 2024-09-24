@@ -1,70 +1,49 @@
 #!/bin/bash
 
-# Check if the correct number of arguments are passed
-if [ $# -ne 1 ]; then
-  echo "Usage: $0 <directory>"
-  exit 1
-fi
+#get directory path of directory with all the directorys in it
+directory="$1"
 
-input_directory=$1
-output_file="$input_directory/country_dist.html"
-temp_file=$(mktemp)
+home=$(pwd)
 
-# Debugging: Print directory being processed
-echo "Processing directory: $input_directory"
+cd "$directory" || exit 1
 
-# Ensure the provided directory exists
-if [ ! -d "$input_directory" ]; then
-  echo "Error: Directory $input_directory does not exist."
-  exit 1
-fi
+ips_file="ips.txt"
 
-# Extract IP addresses from all failed_login_data.txt files in the subdirectories
-for client_dir in "$input_directory"/*/; do
-  if [ -f "$client_dir/failed_login_data.txt" ]; then
-    echo "Extracting IPs from: $client_dir/failed_login_data.txt"
-    awk '{print $4}' "$client_dir/failed_login_data.txt" >> "$temp_file"
-  else
-    echo "No failed_login_data.txt in $client_dir"
-  fi
+ips_file_path="${ips_file}"
+
+touch "${ips_file}"
+
+for dir in */ ; do
+    # if [ ! -f "${dir}/failed_login_data.txt" ] ; then
+    #     echo "$0: ${dir}/failed_login_data.txt does not exist."
+    #     exit 1
+    # fi
+
+    temp=$(awk '{print $5}' "${dir}/failed_login_data.txt")
+    for word in $temp; do
+    echo "$word" >> $ips_file_path
+    done
 done
 
-# If no IPs were extracted, exit
-if [ ! -s "$temp_file" ]; then
-  echo "No failed login data found."
-  rm "$temp_file"
-  exit 0
-fi
+sorted_ip_file="sorted-ip.txt"
 
-# Debugging: Print extracted IP addresses
-echo "Extracted IPs:"
-cat "$temp_file"
+rm -f "$sorted_ip_file"
 
-# Sort and join IPs with country mappings from etc/country_IP_map.txt
-sort "$temp_file" | join -o 2.2 -1 1 -2 1 - <(sort etc/country_IP_map.txt) > "$temp_file".countries
+sort $ips_file > "$sorted_ip_file"
 
-# Debugging: Print the country codes
-echo "Mapped countries:"
-cat "$temp_file".countries
+country_ip_map="${home}/etc/country_IP_map.txt"
 
-# Count occurrences of each country
-sort "$temp_file".countries | uniq -c | awk '{print "data.addRow([\x27"$2"\x27, "$1"]);"}' > "$temp_file".rows
-cat "$temp_file".rows  # Add this line to print the rows
+sorted_country_file="sorted_countries.txt"
 
-# Debugging: Check rows generated for the chart
-echo "Generated rows for GeoChart:"
-cat "$temp_file".rows
+touch "$sorted_country_file"
 
-# Wrap the results with the header and footer to create the full HTML file
-echo "Generating HTML file at: $output_file"
-bin/wrap_contents.sh "$temp_file".rows country_dist "$output_file"
+join "$sorted_ip_file" "$country_ip_map" | awk '{print $2}' | sort > "$sorted_country_file"
 
-# Check if the HTML file was created
-if [ -f "$output_file" ]; then
-  echo "HTML file $output_file successfully generated."
-else
-  echo "Error: Failed to generate HTML file."
-fi
+contents_file="country_contents.txt"
 
-# Clean up temporary files
-rm "$temp_file" "$temp_file".countries "$temp_file".rows
+touch "$contents_file"
+
+uniq -c "$sorted_country_file" | awk '{print"data.addRow([\x27"$2"\x27, "$1"]);"}' > "$contents_file"
+
+
+source "${home}/bin/wrap_contents.sh" $contents_file "country_dist" "country_dist.html"
