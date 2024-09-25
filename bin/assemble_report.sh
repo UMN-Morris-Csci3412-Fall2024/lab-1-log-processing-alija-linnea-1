@@ -2,9 +2,9 @@
 
 dir="$1"
 
-home=$(pwd)
+# home=$(pwd)
 
-cd "$dir"
+cd "$dir" || exit 1
 
 country_contents="country_contents.txt"
 
