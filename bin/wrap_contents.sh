@@ -5,7 +5,7 @@ specifier="$2"
 result_file="$3"
 html_components_home="$4"
 
-home=$(pwd)
+# home=$(pwd)
 
 # cd $temp_dir
 
