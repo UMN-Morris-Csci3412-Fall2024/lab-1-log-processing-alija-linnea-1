@@ -5,6 +5,8 @@ directory="$1"
 
 home=$(pwd)
 
+echo "hours home ${home}"
+
 cd "$directory" || exit 1
 
 hours_file="hours.txt"
@@ -44,4 +46,4 @@ awk '{print"data.addRow([\x27"$2"\x27, "$1"]);"}' "$sorted_hours_file" > "$conte
     #     exit 1
     # fi
 
-source "${home}/bin/wrap_contents.sh" "$contents_file" "hours_dist" "hours_dist.html"
+source "${home}/bin/wrap_contents.sh" "$contents_file" "hours_dist" "hours_dist.html" "$home"

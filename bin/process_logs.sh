@@ -1,22 +1,34 @@
-#!/bin/bash
+# Create a temporary scratch directory
+scratch_dir=$(mktemp -d)
 
-log_directory="data/discovery/var/log"
+source=$(pwd)
 
-output_file="data/discovery/failed_login_data.txt"
-
-if [ ! -d "$log_directory" ]; then
-  echo "Log directory does not exist: $log_directory"
-  exit 1
-fi
-
-# Clear the output file first
-> "$output_file"
-
-# Process each secure log file
-for log_file in "$log_directory"/secure*; do
-  echo "Processing $log_file"
-  # Make sure to extract the correct column for IP addresses
-  grep "Failed password" "$log_file" | awk '{print $(NF-3)}' >> "$output_file"
+#iterate over all the tar archives and extract them
+for tar_archive in "$@"; do
+    tar -xzf "$tar_archive" -C "$scratch_dir"
 done
 
-echo "Failed login data consolidated into $output_file"
+cd $scratch_dir
+
+#iterate over all newly created directorys and call process_client_logs
+for dir in */ ; do
+    source "${source}/bin/process_client_logs.sh" $dir
+done
+
+cd "${source}"
+
+source "${source}/bin/create_username_dist.sh" $scratch_dir
+
+cd "${source}"
+
+source "${source}/bin/create_hours_dist.sh" $scratch_dir
+
+cd "${source}"
+
+source "${source}/bin/create_country_dist.sh" $scratch_dir
+
+cd "${source}"
+
+source "${source}/bin/assemble_report.sh" $scratch_dir
+
+mv "${scratch_dir}/failed_login_summary.html" "${source}/failed_login_summary.html"

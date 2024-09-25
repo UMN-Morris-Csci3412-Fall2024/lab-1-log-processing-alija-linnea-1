@@ -5,6 +5,8 @@ directory="$1"
 
 home=$(pwd)
 
+echo "country home ${home}"
+
 cd "$directory" || exit 1
 
 ips_file="ips.txt"
@@ -46,4 +48,5 @@ touch "$contents_file"
 uniq -c "$sorted_country_file" | awk '{print"data.addRow([\x27"$2"\x27, "$1"]);"}' > "$contents_file"
 
 
-source "${home}/bin/wrap_contents.sh" $contents_file "country_dist" "country_dist.html"
+source "${home}/bin/wrap_contents.sh" $contents_file "country_dist" "country_dist.html" "$home"
+

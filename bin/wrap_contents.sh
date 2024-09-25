@@ -3,8 +3,9 @@
 contents_file="$1"
 specifier="$2"
 result_file="$3"
+html_components_home="$4"
 
-#home=$(pwd)
+home=$(pwd)
 
 # cd $temp_dir
 
@@ -31,10 +32,13 @@ footer_file="${specifier}_footer.html"
 #     exit 1
 # fi
 
-specifier_header_path=$(find ../html_components -name "$header_file")
+
+specifier_header_path=$(find "$html_components_home" -name "$header_file")
+# specifier_header_path="html_components/${header_file}"
 
 #find local file path to the footer file that will be put on the bottom
-specifier_footer_path=$(find ../html_components -name "$footer_file")
+specifier_footer_path=$(find "$html_components_home" -name "$footer_file")
+# specifier_footer_path="html_components/${footer_file}"
 
 #get string contents of all needed files
 
